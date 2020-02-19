@@ -1,0 +1,19 @@
+# requirements file for libsemigroups_cppyy
+appdirs==1.4.3
+certifi==2019.11.28
+cppyy==1.6.1
+cppyy-backend==1.10.7
+cppyy-cling==6.18.2.6
+CPyCppyy==1.10.1
+distlib==0.3.0
+filelock==3.0.12
+importlib-metadata==1.5.0
+packaging==20.1
+pluggy==0.13.1
+py==1.8.1
+pyparsing==2.4.6
+six==1.14.0
+toml==0.10.0
+tox==3.14.5
+virtualenv==20.0.4
+zipp==3.0.0
