@@ -43,6 +43,7 @@ docker pull libsemigroups/libsemigroups-cppyy
 
 Once installed, libsemigroups-cppyy can be used by opening python by typing
 ~~~
+docker run --rm -it libsemigroups/libsemigroups-cppyy
 python3
 ~~~
 
