@@ -34,4 +34,19 @@ Finally, for normal use, git clone this repository and then run:
 
 Refer to demo.ipynb for more functionality. 
 
+## Docker
 
+If you have [Docker](https://www.docker.com) installed, you can download this container using:
+~~~
+docker pull libsemigroups/libsemigroups-cppyy
+~~~
+
+Once installed, libsemigroups-cppyy can be used by opening python by typing
+~~~
+python3
+~~~
+
+Load the `libsemigroups_cppyy` package in python by typing
+~~~
+import libsemigroups_cppyy
+~~~
