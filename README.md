@@ -17,9 +17,9 @@ Add conda-forge to an installation of anaconda:
 
     conda config --add channels conda-forge
     
-And then download libsemigroups, specifying the version (1.0.5)
+And then download libsemigroups, specifying the version (1.0.6)
 
-    conda install libsemigroups=1.0.5
+    conda install libsemigroups=1.0.6
 
 Then install cppyy and networkx via conda or pip:
     
@@ -41,9 +41,12 @@ If you have [Docker](https://www.docker.com) installed, you can download this co
 docker pull libsemigroups/libsemigroups-cppyy
 ~~~
 
-Once installed, libsemigroups-cppyy can be used by opening python by typing
+The docker container for `libsemigroups_cppyy` can be started by typing:
 ~~~
 docker run --rm -it libsemigroups/libsemigroups-cppyy
+~~~
+and in the docker container you can start python by typing:
+~~~
 python3
 ~~~
 
