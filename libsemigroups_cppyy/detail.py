@@ -136,6 +136,11 @@ def wrap_overload_params_and_unwrap_return_value(
         ),
     )
 
+def wrap_input(type_nm, cpp_mem_fn, wrap_fn):
+    actual = "__" + type_nm.__name__ + "_" + cpp_mem_fn.__name__
+    setattr(type_nm, actual, cpp_mem_fn)
+    actual = getattr(type_nm, actual)
+    setattr(type_nm, cpp_mem_fn.__name__, lambda *args: actual(args[0],wrap_fn(*args[1:])))
 
 def unwrap_return_value_to_int(type_nm, cpp_mem_fn):
     unwrap_return_value(
