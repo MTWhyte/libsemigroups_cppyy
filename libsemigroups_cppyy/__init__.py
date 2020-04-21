@@ -101,8 +101,6 @@ sys.stdout = stdout
 cppyy.cppdef("#define FMT_HEADER_ONLY")
 cppyy.cppdef("#define HPCOMBI_CONSTEXPR_FUN_ARGS")
 
-cppyy.include("libsemigroups/libsemigroups.hpp")
-
 cppyy.gbl.libsemigroups
 
 from cppyy.gbl.libsemigroups import ReportGuard
@@ -120,7 +118,6 @@ from libsemigroups_cppyy.perm import *
 from libsemigroups_cppyy.pperm import *
 from libsemigroups_cppyy.schreier_sims import SchreierSims
 from libsemigroups_cppyy.transf import *
-from libsemigroups_cppyy.cong_pair import CongruenceByPairs
 from libsemigroups_cppyy.todd_coxeter import ToddCoxeter
 
 microseconds = cppyy.gbl.std.chrono.microseconds
