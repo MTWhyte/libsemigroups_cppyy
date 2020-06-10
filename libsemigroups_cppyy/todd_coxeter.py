@@ -11,21 +11,32 @@ import libsemigroups_cppyy.detail as detail
 import cppyy.ll as ll
 
 
-def ToddCoxeter(t):
-    if not isinstance(t, str):
-        raise TypeError("invalid argument, expected a string, but found " + t)
-    if t == "right":
+def ToddCoxeter(*args):
+    FroidurePin = cppyy.gbl.libsemigroups.FroidurePin
+    if len(args) > 2 or len(args) == 0:
+        raise TypeError(
+            "wrong number of arguments, there must be 1 or 2, found %d" % len(args)
+        )
+    if len(args) == 1 and not isinstance(args[0], str):
+        raise TypeError("invalid argument, expected a string as first argument")
+
+    if len(args) == 2 and not (
+        hasattr(args[1], "__iter__")
+        and isinstance(args[1], FroidurePin(type(args[1][0])))
+    ):
+        raise TypeError(
+            "the argument must be a Froidurepin object, not %s" % type(args[0]).__name__
+        )
+    if args[0] == "right":
         t = cppyy.gbl.libsemigroups.congruence_type.right
-    elif t == "left":
+    elif args[0] == "left":
         t = cppyy.gbl.libsemigroups.congruence_type.left
-    elif t == "twosided":
+    elif args[0] == "twosided":
         t = cppyy.gbl.libsemigroups.congruence_type.twosided
     else:
         raise ValueError(
-            'invalid argument, expected one of "right", "left" and "twosided", but found '
-            + '"'
-            + t
-            + '"'
+            'invalid argument, expected one of "right", "left" and "twosided", found %s'
+            % args[0]
         )
 
     tc_type = cppyy.gbl.libsemigroups.congruence.ToddCoxeter
@@ -122,4 +133,26 @@ def ToddCoxeter(t):
         tc_type, tc_type.class_index_to_word, lambda self, x: list(x)
     )
 
-    return tc_type(t)
+    tc_type.generating_pairs = lambda self: [
+        [list(x.first), list(x.second)]
+        for x in detail.RandomAccessRange(
+            self.cbegin_generating_pairs(), self.cend_generating_pairs()
+        )
+    ]
+
+    tc_type.normal_forms = lambda self: [
+        list(x)
+        for x in detail.RandomAccessRange(
+            self.cbegin_normal_forms(), self.cend_normal_forms()
+        )
+    ]
+
+    tc_type.non_trivial_classes = lambda self: [
+        [list(y) for y in list(x)]
+        for x in detail.RandomAccessRange(self.cbegin_ntc(), self.cend_ntc())
+    ]
+
+    if len(args) == 1:
+        return tc_type(t)
+    else:
+        return tc_type(t, args[1])
