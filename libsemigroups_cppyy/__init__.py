@@ -1,15 +1,10 @@
 """
 A minimal cppyy wrapper for the libsemigroups C++ library.
-
 This module contains some minimal wrapping code to interact with the
 libsemigroups C++ library:
-
     https://github.com/libsemigroups/libsemigroups
-
 via cppyy:
-
     https://bitbucket.org/wlav/cppyy/
-
 For this to work, libsemigroups must be installed on your computer (i.e. the
 executables libsemigroups.1.dylib, libsemigroups.dylib, and libsemigroups.a
 must be somewhere on your computer where cppyy can load it).
@@ -100,6 +95,8 @@ sys.stdout = stdout
 
 cppyy.cppdef("#define FMT_HEADER_ONLY")
 cppyy.cppdef("#define HPCOMBI_CONSTEXPR_FUN_ARGS")
+
+cppyy.include("libsemigroups/libsemigroups.hpp")
 
 cppyy.gbl.libsemigroups
 
