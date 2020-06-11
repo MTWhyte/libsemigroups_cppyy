@@ -12,7 +12,9 @@ import cppyy.ll as ll
 
 
 def ToddCoxeter(*args):
-    FroidurePin = cppyy.gbl.libsemigroups.FroidurePin
+    tc_type = cppyy.gbl.libsemigroups.congruence.ToddCoxeter
+    fp_type = cppyy.gbl.libsemigroups.FroidurePin
+    kb_type = cppyy.gbl.libsemigroups.fpsemigroup.KnuthBendix
     if len(args) > 2 or len(args) == 0:
         raise TypeError(
             "wrong number of arguments, there must be 1 or 2, found %d" % len(args)
@@ -21,11 +23,16 @@ def ToddCoxeter(*args):
         raise TypeError("invalid argument, expected a string as first argument")
 
     if len(args) == 2 and not (
-        hasattr(args[1], "__iter__")
-        and isinstance(args[1], FroidurePin(type(args[1][0])))
+        (
+            hasattr(args[1], "__iter__")
+            and isinstance(args[1], fp_type(type(args[1][0])))
+        )
+        or (isinstance(args[1], kb_type) and len(args[1].alphabet()) > 0)
+        or (isinstance(args[1], tc_type))
     ):
         raise TypeError(
-            "the argument must be a Froidurepin object, not %s" % type(args[0]).__name__
+            "the second argument must be a FroidurePin, ToddCoxeter or a KnuthBendix object with non-empty alphabet, not %s"
+            % type(args[1]).__name__
         )
     if args[0] == "right":
         t = cppyy.gbl.libsemigroups.congruence_type.right
@@ -38,8 +45,6 @@ def ToddCoxeter(*args):
             'invalid argument, expected one of "right", "left" and "twosided", found %s'
             % args[0]
         )
-
-    tc_type = cppyy.gbl.libsemigroups.congruence.ToddCoxeter
 
     undef = ll.static_cast["size_t"](cppyy.gbl.libsemigroups.UNDEFINED)
 
