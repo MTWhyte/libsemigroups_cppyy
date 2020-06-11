@@ -28,11 +28,16 @@ def ToddCoxeter(*args):
             and isinstance(args[1], fp_type(type(args[1][0])))
         )
         or (isinstance(args[1], kb_type) and len(args[1].alphabet()) > 0)
-        or (isinstance(args[1], tc_type))
+        or (isinstance(args[1], tc_type) and args[1].nr_generators() > 0)
     ):
         raise TypeError(
-            "the second argument must be a FroidurePin, ToddCoxeter or a KnuthBendix object with non-empty alphabet, not %s"
+            "the second argument must be a FroidurePin object, ToddCoxeter object with at least one generator, or a KnuthBendix object with non-empty alphabet, not %s"
             % type(args[1]).__name__
+            # TODO: Make separate TypeError for objects, and for the nonempty piece
+            # Otherwise, this could read 'Expected ToddCoxeter with at least one
+            # generator, found ToddCoxeter'
+            # TODO: ToddCoxeter used in construction of new ToddCoxeter needs to be
+            # of the same 'handedness'
         )
     if args[0] == "right":
         t = cppyy.gbl.libsemigroups.congruence_type.right
@@ -56,52 +61,45 @@ def ToddCoxeter(*args):
         hex(id(x)),
     )
 
-    def wrap_strategy(*args):
-        if len(args) == 1:
-            return [args[0]], ""
+    def wrap_strategy(self, *args):
+        if len(args) == 0:
+            return tuple(), ""
         overload = "libsemigroups::congruence::ToddCoxeter::policy::strategy"
-        if len(args) != 2:
+        if len(args) != 1:
             raise TypeError("invalid argument, expected 0 or 1 arguments")
-            # The user enters 0 or 1 arguments here, even though 1 or 2 arguments
-            # is actually given to this function
-        if not isinstance(args[1], str):
+        if not isinstance(args[0], str):
             raise TypeError("invalid argument, expected a string or no argument")
-        if args[1] == "felsch":
-            return [args[0], tc_type.policy.strategy.felsch], overload
-        elif args[1] == "hlt":
-            return [args[0], tc_type.policy.strategy.hlt], overload
-        elif args[1] == "random":
-            return [args[0], tc_type.policy.strategy.random], overload
+        if args[0] == "felsch":
+            return (tc_type.policy.strategy.felsch,), overload
+        elif args[0] == "hlt":
+            return (tc_type.policy.strategy.hlt,), overload
+        elif args[0] == "random":
+            return (tc_type.policy.strategy.random,), overload
         else:
             raise ValueError(
-                'invalid argument, expected one of "felsch", "hlt" and "random", but found '
-                + '"'
-                + args[1]
-                + '"'
+                'invalid argument, expected one of "felsch", "hlt" and "random", but found %s'
+                % args[0]
             )
 
-    def wrap_standardize(*args):
-        if len(args) == 1:
-            return [None], ""
-        # overload is the type of the parameter of the cpp overload
-        overload = "libsemigroups::congruence::ToddCoxeter::order"
-        if len(args) != 2:
-            raise TypeError("invalid argument, expected exactly one argument")
-        if not isinstance(args[1], str):
-            raise TypeError("invalid argument, expected a string")
-        if args[1] == "lex":
-            return [args[0], tc_type.order.lex], overload
-        elif args[1] == "shortlex":
-            return [args[0], tc_type.order.shortlex], overload
-        elif args[1] == "recursive":
-            return [args[0], tc_type.order.recursive], overload
+    def wrap_standardize(self, x):
+        if isinstance(x, str):
+            # overload is the type of the parameter of the cpp overload
+            overload = "libsemigroups::congruence::ToddCoxeter::order"
+            if x == "lex":
+                return (tc_type.order.lex,), overload
+            elif x == "shortlex":
+                return (tc_type.order.shortlex,), overload
+            elif x == "recursive":
+                return (tc_type.order.recursive,), overload
+            else:
+                raise ValueError(
+                    'expected one of "lex", "shortlex" and "recursive", but found %s'
+                    % x
+                )
+        elif isinstance(x, bool):
+            return (x,), "bool"
         else:
-            raise ValueError(
-                'invalid argument, expected one of "lex", "shortlex" and "recursive", but found '
-                + '"'
-                + arg[1]
-                + '"'
-            )
+            raise TypeError("expected a string or bool, not %s" % type(x).__name__)
 
     def int_to_kind(self, n):
         if n == 0:
@@ -129,9 +127,7 @@ def ToddCoxeter(*args):
         tc_type, tc_type.strategy, wrap_strategy, int_to_strategy
     )
 
-    detail.wrap_overload_params_and_unwrap_return_value(
-        tc_type, tc_type.standardize, wrap_standardize, lambda self, x: x
-    )
+    detail.wrap_overload_params(tc_type, tc_type.standardize, wrap_standardize)
 
     detail.unwrap_return_value(tc_type, tc_type.kind, int_to_kind)
     detail.unwrap_return_value(
