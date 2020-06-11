@@ -9,21 +9,47 @@ class TestToddCoxeter(unittest.TestCase):
         try:
             ToddCoxeter("left")
         except:
-            self.fail("Unexpected exception thrown")
+            self.fail("unexpected exception thrown")
         try:
             ToddCoxeter("right")
         except:
-            self.fail("Unexpected exception thrown")
+            self.fail("unexpected exception thrown")
         try:
             ToddCoxeter("twosided")
         except:
-            self.fail("Unexpected exception thrown")
+            self.fail("unexpected exception thrown")
 
         with self.assertRaises(TypeError):
             ToddCoxeter(45)
         with self.assertRaises(ValueError):
             ToddCoxeter("lft")
+        with self.assertRaises(TypeError):
+            ToddCoxeter("twosided", "left", "right")
 
+        S = FroidurePin(Transformation([0, 0, 1, 2, 3]))
+        with self.assertRaises(TypeError):
+            ToddCoxeter(S)
+        try:
+            ToddCoxeter("twosided", S)
+        except:
+            self.fail("unexpected exception thrown")
+
+        K = KnuthBendix()
+        with self.assertRaises(TypeError):
+            ToddCoxeter("left", K)
+        K.set_alphabet("a")
+        try:
+            ToddCoxeter("left", K)
+        except:
+            self.fail("unexpected exception thrown")
+
+        T = ToddCoxeter("left")
+        try:
+            ToddCoxeter("left", T)
+        except:
+            self.fail("unexpected exception thrown")
+
+    def test_attributes(self):
         tc = ToddCoxeter("left")
         tc.set_nr_generators(1)
         tc.add_pair([0, 0, 0, 0, 0, 0], [0, 0, 0])
@@ -32,10 +58,21 @@ class TestToddCoxeter(unittest.TestCase):
         self.assertFalse(tc.contains([0, 0, 0], [0, 0]))
         self.assertEqual(tc.kind(), "left")
         self.assertEqual(tc.class_index_to_word(1), [0, 0])
+        self.assertFalse(tc.has_parent_froidure_pin())
+        self.assertEqual(tc.nr_generators(), 1)
+        self.assertEqual(tc.nr_generating_pairs(), 1)
 
         S = FroidurePin(Transformation([1, 2, 2]), Transformation([2, 0, 1]))
         tc = ToddCoxeter("twosided", S)
         self.assertEqual(tc.nr_classes(), 24)
+        self.assertTrue(tc.has_parent_froidure_pin())
+
+        K = KnuthBendix()
+        K.set_alphabet("a")
+        K.add_rule("aaaa", "aa")
+        tc = ToddCoxeter("left", K)
+        self.assertEqual(tc.nr_classes(), 3)
+
 
     def test_iterators(self):
         tc = ToddCoxeter("left")
