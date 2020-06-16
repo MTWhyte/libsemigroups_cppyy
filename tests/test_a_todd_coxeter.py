@@ -268,7 +268,7 @@ class TestToddCoxeter(unittest.TestCase):
             self.fail("unexpected exception thrown")
         self.assertEqual(tc.strategy(), "random")
 
-    def test_iterators(self):
+    def test_000_iterators(self):
         tc = ToddCoxeter("left")
         tc.set_nr_generators(2)
         tc.add_pair([0, 0, 0, 0], [0])
