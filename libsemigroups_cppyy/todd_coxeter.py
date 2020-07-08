@@ -12,6 +12,14 @@ import cppyy.ll as ll
 
 
 def ToddCoxeter(*args):
+    """
+    Creates a ToddCoxeter object.
+
+    Parameters
+    ----------
+    kind
+        A string "left", "right" or "twosided", indicating the handedness of the congruence
+    """
     tc_type = cppyy.gbl.libsemigroups.congruence.ToddCoxeter
     fp_type = cppyy.gbl.libsemigroups.FroidurePin
     kb_type = cppyy.gbl.libsemigroups.fpsemigroup.KnuthBendix
