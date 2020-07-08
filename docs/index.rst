@@ -9,6 +9,17 @@ Here is some text to see how it looks.
    :maxdepth: 2
    :caption: Contents:
 
+   actions
+   congruences
+   digraphs
+   elements
+   fpsemigroups
+   order
+   semigroups
+   semirings
+   words
+   misc
+   
 Indices and tables
 ==================
 
