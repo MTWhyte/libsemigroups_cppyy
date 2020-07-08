@@ -6,3 +6,4 @@ cppyy
 *.html
 htmlcov
 .coverage
+_build/
